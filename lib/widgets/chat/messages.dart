@@ -25,7 +25,8 @@ class Messages extends StatelessWidget {
                 message: chatDocs[index]['text'],
                 isMe: chatDocs[index]['userId'] == user?.uid,
                 userId: chatDocs[index]['userId'],
-                key: ValueKey(chatDocs[index].id)
+                key: ValueKey(chatDocs[index].id),
+                imageUrl: chatDocs[index]['userImage'],
               );
             },
           );

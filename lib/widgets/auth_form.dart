@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_chat/widgets/pickers/user_image_picker.dart';
 
 class AuthForm extends StatefulWidget {
   const AuthForm({Key? key, required this.submitFn, required this.isLoading})
@@ -6,12 +9,8 @@ class AuthForm extends StatefulWidget {
 
   final bool isLoading;
 
-  final void Function(
-    String email,
-    String password,
-    String username,
-    bool isLogin,
-  ) submitFn;
+  final void Function(String email, String password, String username,
+      bool isLogin, File image) submitFn;
 
   @override
   State<AuthForm> createState() => _AuthFormState();
@@ -23,28 +22,43 @@ class _AuthFormState extends State<AuthForm> {
   String _userEmail = '';
   String _userName = '';
   String _userPassword = '';
+  File? _userImageFile;
 
   void _trySubmit() {
     final isValid = _formKey.currentState?.validate();
     FocusScope.of(context).unfocus();
 
+    if (_userImageFile == null && !_isLogin) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: const Text('Please pick an image.'),
+        backgroundColor: Theme.of(context).errorColor,
+      ));
+    }
+
     if (isValid!) {
       _formKey.currentState?.save();
-      widget.submitFn(
-          _userEmail.trim(), _userName.trim(), _userPassword.trim(), _isLogin);
+      widget.submitFn(_userEmail.trim(), _userName.trim(), _userPassword.trim(),
+          _isLogin, _userImageFile!);
     }
+  }
+
+  void pickImage(File image) {
+    setState(() {
+      _userImageFile = image;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: EdgeInsets.all(20),
+      margin: const EdgeInsets.all(20),
       child: SingleChildScrollView(
         child: Padding(
-          padding: EdgeInsets.all(16),
+          padding: const EdgeInsets.all(16),
           child: Form(
             key: _formKey,
             child: Column(mainAxisSize: MainAxisSize.min, children: [
+              if (!_isLogin) UserImagePicker(pickImage),
               TextFormField(
                 key: const ValueKey('email'),
                 validator: (value) {
@@ -54,7 +68,7 @@ class _AuthFormState extends State<AuthForm> {
                   return null;
                 },
                 keyboardType: TextInputType.emailAddress,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'Email input',
                 ),
                 onSaved: (value) {
@@ -70,7 +84,7 @@ class _AuthFormState extends State<AuthForm> {
                     }
                     return null;
                   },
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     labelText: 'Username',
                   ),
                   onSaved: (value) {
@@ -85,7 +99,7 @@ class _AuthFormState extends State<AuthForm> {
                   }
                   return null;
                 },
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'Password',
                 ),
                 obscureText: true,
@@ -93,7 +107,7 @@ class _AuthFormState extends State<AuthForm> {
                   _userPassword = value!;
                 },
               ),
-              SizedBox(
+              const SizedBox(
                 height: 12,
               ),
               ElevatedButton(

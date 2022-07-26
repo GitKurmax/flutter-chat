@@ -16,6 +16,7 @@ class Messages extends StatelessWidget {
           }
           final chatDocs =  chatSnapshot.data!.docs;
           final user = FirebaseAuth.instance.currentUser;
+
           return ListView.builder(
             reverse: true,
             itemCount: chatDocs.length,
@@ -23,6 +24,7 @@ class Messages extends StatelessWidget {
               return MessageBubble(
                 message: chatDocs[index]['text'],
                 isMe: chatDocs[index]['userId'] == user?.uid,
+                userId: chatDocs[index]['userId'],
                 key: ValueKey(chatDocs[index].id)
               );
             },

@@ -10,7 +10,7 @@ class ChatScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Fluttr chat'), actions: [
+      appBar: AppBar(title: Text('Flutter chat'), actions: [
         DropdownButton(
           icon: Icon(
             Icons.more_vert,
